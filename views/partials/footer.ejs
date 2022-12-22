@@ -1,0 +1,56 @@
+</div>
+<div class="footer-padding"></div>
+<div class="footer">
+  <p>Made with ❤️ by Dhriti</p>
+</div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+  function expand(element) {
+    element.style.height = "inherit";
+    element.style.height = 15 + (element.scrollHeight) + "px";
+
+   window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function deleteFunction() {
+  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+
+  document.getElementById("delete-btn").disabled = true;
+  if (checkedOne) {
+    document.getElementById("delete-btn").disabled = false;
+  }
+}
+
+function activateInput(element, id1, id2){
+  document.getElementById(id1).disabled = false;
+  document.getElementById(id2).value="";
+  document.getElementById(id2).disabled = true;
+}
+
+function clearSelection(id1, id2){
+  document.getElementById(id1).value="";
+  document.getElementById(id1).disabled = true;
+  document.getElementById(id2).value="";
+  document.getElementById(id2).disabled = true;
+  document.getElementById('optionsRadios1').checked=false;
+  document.getElementById('optionsRadios2').checked=false;
+}
+
+$('#myModal').on('shown.bs.modal', function () {
+  console.log("modal");
+  $('#myInput').focus()
+})
+
+
+
+</script>
+
+
+</body>
+
+</html>

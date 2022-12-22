@@ -1,0 +1,18 @@
+<%- include("partials/header"); %>
+
+<h1><%= title %></h1>
+<p style="color:#878787;"><i class="fa fa-calendar"></i> <%=date %></p>
+
+<%if(image!=="" || imageLink!==""){%>
+<div class="post-img-box">
+  <%if(image!=="" && image!==undefined){%>
+  <img class="post-img" src="<%=image %>" alt="">
+  <%}%>
+  <% if(imageLink!=="" && imageLink!==undefined) { %>
+    <img class="post-img" src="<%=imageLink %>" alt="">
+  <%} %>
+</div>
+  <%} %>
+
+<p><%= content %></p>
+<%- include("partials/footer"); %>

@@ -34,20 +34,20 @@
         </div>
         <div class="modal-body">
           <div class="image-entry">
-            <input type="radio" aria-label="..." name="optionsRadios" id="optionsRadios1" value="option1" onchange="activateInput(this, 'postImg', 'postImgLink')">
-            <label for="postImg">Choose image from device</label>
-            <input class="form-control" type="file" id="postImg" name="postImg" style="display: block;" placeholder="Upload Image" disabled />
+            <input type="radio" aria-label="..." name="optionsRadios" id="optionsRadios1" value="option1" onchange="activateInput(this, 'postImgPath', 'postImgLink')">
+            <label for="postImgPath">Choose image from device</label>
+            <input class="form-control" type="file" id="postImgPath" name="postImgPath" style="display: block;" placeholder="Upload Image" disabled />
           <!-- /input-group -->
           </div>
 
           <div class="image-entry">
-              <input type="radio" aria-label="..." name="optionsRadios" id="optionsRadios2" value="option2" onchange="activateInput(this, 'postImgLink', 'postImg')">
+              <input type="radio" aria-label="..." name="optionsRadios" id="optionsRadios2" value="option2" onchange="activateInput(this, 'postImgLink', 'postImgPath')">
             <label for="postImgLink">Image URL</label>
             <input class="form-control" type="text" id="postImgLink" name="postImgLink" value="" style="display: block;" placeholder="Paste Image URL" disabled>
           </div><!-- /input-group -->
         </div>
         <div class="modal-footer">
-          <button name="button" type="button" class="btn btn-default" onclick="clearSelection('postImgLink', 'postImg')">Clear</button>
+          <button name="button" type="button" class="btn btn-default" onclick="clearSelection('postImgLink', 'postImgPath')">Clear</button>
           <button type="button" class="btn btn-primary" data-dismiss="modal" style="background-color: #1abc9c; border: none">Save</button>
         </div>
       </div>

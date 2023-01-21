@@ -3,10 +3,10 @@
 <h1><%= title %></h1>
 <p style="color:#878787;"><i class="fa fa-calendar"></i> <%=date %></p>
 
-<%if(image!=="" || imageLink!==""){%>
+<%if(imagePath!=="" || imageLink!==""){%>
 <div class="post-img-box">
-  <%if(image!=="" && image!==undefined){%>
-  <img class="post-img" src="<%=image %>" alt="">
+  <%if(imagePath!=="" && imagePath!==undefined){%>
+  <img class="post-img" src="data:image/png;base64,<%=imagePath%>" alt="">
   <%}%>
   <% if(imageLink!=="" && imageLink!==undefined) { %>
     <img class="post-img" src="<%=imageLink %>" alt="">

@@ -1,14 +1,15 @@
 //jshint esversion:6
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+const mongoose = require('mongoose');
 const _ = require('lodash');
 const multer = require("multer");
-const sharp = require("sharp");
-const {resolve} = require('path');
-const { v4: uuidv4 } = require('uuid');
-const Axios = require('axios');
+const fs = require('fs');
 
+mongoose.set("strictQuery", false);
+mongoose.connect(process.env.DAILY_JOURNAL_DB, {useNewURLParser: true});
 
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
 const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
@@ -17,20 +18,29 @@ const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rho
 const app = express();
 
 app.set('view engine', 'ejs');
-
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(bodyParser.json())
 app.use(express.static("public"));
 
-var posts = [];
+const postsSchema = new mongoose.Schema({
+  title: String,
+  date: String,
+  body: String,
+  imageLink: String,
+  imagePath: Buffer
+});
+
+const Post = mongoose.model("Post", postsSchema);
+
 var storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, './uploads')
-  },
-  filename: function(req, file, cb) {
-    cb(null, file.originalname)
-  }
+    destination: (req, file, cb) => {
+        cb(null, 'uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
 });
 
 var upload = multer({
@@ -46,12 +56,18 @@ var upload = multer({
 app.use(express.static(__dirname + '/public'));
 app.use('/uploads', express.static('uploads'));
 
-
 app.get("/", function(req, res) {
-  res.render('home', {
-    initalContent: homeStartingContent,
-    posts: posts
-  });
+  Post.find(function (err, posts){
+  if(err){
+    console.log(err);
+  }
+  else{
+    res.render('home', {
+      initalContent: homeStartingContent,
+      posts: posts
+    });
+  };
+});
 });
 
 app.get("/about", function(req, res) {
@@ -71,59 +87,50 @@ app.get("/compose", function(req, res) {
 });
 
 app.get("/posts/:id", function(req, res) {
-  for (let i = 0; i < posts.length; i++) {
-    if (req.params.id === posts[i].id) {
+  Post.findById(req.params.id, function (err, post) {
+    if (err){
+        console.log(err);
+    }
+    else{
       res.render('post', {
-        title: posts[i].title,
-        content: posts[i].body,
-        image: (posts[i].imagePost!=="" ? "../../"+posts[i].imagePost: ""),
-        imageLink: posts[i].imagePostLink,
-        date: posts[i].date
+        title: post.title,
+        content: post.body,
+        imagePath: post.imagePath.toString('base64'),
+        imageLink: post.imageLink,
+        date: post.date
       });
     }
-  }
+});
 });
 
-app.post("/", function(req, res){
+app.post("/delete", function(req, res){
   console.log(req.body);
-  const toDel = Object.values(req.body);
-  posts = posts.filter(item => !toDel.includes(item.id));
-  res.redirect("/");
+  checkedItemIds = req.body.checkbox;
+
+  Post.deleteMany({_id: {$in: checkedItemIds}},function(err, result) {
+      if (!err) {
+        console.log("Item deleted successfully!");
+        res.redirect("/");
+      }
+});
 });
 
-app.post("/compose", upload.single('postImg'), function(req, res) {
-
-  const post = {
-    id: uuidv4(),
+app.post("/compose", upload.single('postImgPath'), function(req, res) {
+  console.log(req.file);
+  newPost = new Post({
     title: req.body.postTitle,
-    imagePost: ((req.file===undefined || req.file.path==="") ? "" : req.file.path),
-    imagePostLink: ((req.body.postImgLink===undefined || req.body.postImgLink==="") ? "" : req.body.postImgLink),
     body: req.body.postContent,
+    imagePath: ((req.file===undefined || req.file.path==="") ? "" : fs.readFileSync(__dirname+"/"+req.file.path)),
+    imageLink: ((req.body.postImgLink===undefined || req.body.postImgLink==="") ? "" : req.body.postImgLink),
     date: new Date().toLocaleDateString('en-US', {
       weekday: "long",
       day: "numeric",
       month: "long",
       year: "numeric"
     })
-  };
+  });
 
-  // var outputPath="";
-  // console.log(req.body);
-  //
-  //   if(req.file!==undefined){
-  //   outputPath = req.file.destination+"/resize-"+req.file.filename;
-  //
-  //   sharp(req.file.path)
-  //   .resize({ height: 300, fit:"contain"})
-  //   .toFile(outputPath)
-  //   .then(data => {
-  //     // 300 pixels high, auto-scaled width
-  //     console.log(data);
-  //   });
-  //   post.imagePost=outputPath;
-  // }
-
-  posts.push(post);
+  newPost.save();
   res.redirect("/");
 });
 

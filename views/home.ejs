@@ -2,13 +2,13 @@
 <h1>Home</h1>
 <p><%= initalContent %></p>
 
-  <form action="/" method="post">
+  <form action="/delete" method="post">
 <% for(let i in posts){ %>
   <div class="checkbox">
   <label for="checkbox-form">
-    <input onclick="deleteFunction()" type="checkbox" value="<%= posts[i].id%>" name="<%= posts[i].id%>" />
+    <input onclick="deleteFunction()" type="checkbox" value="<%= posts[i]._id%>" name="checkbox" />
     <h2><%= posts[i].title %></h2>
-    <p class="post-body"><%= posts[i].body.substr(0, 100)+"...";%> <a href="/posts/<%=posts[i].id %>">Read More</a></p>
+    <p class="post-body"><%= posts[i].body.substr(0, 100)+"...";%> <a href="/posts/<%=posts[i]._id %>">Read More</a></p>
   </label>
 </div>
   <%}%>

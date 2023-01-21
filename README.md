@@ -1,0 +1,2 @@
+# daily-journal-app
+Daily Journal App based on Node, Express, EJS and MongoDB equipped with functionalities of adding and deleting personal blogs. Along with this, it also has the feature to add picture(from local filesytem or the internet) to each of the blog. Use of MongoDB and Mongoose-atlas ensures that the blogs created stay in place even after the app was closed. Visit: https://daily-journal-app-p2mu.onrender.com/ to view the deployed website.
